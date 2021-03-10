@@ -31,7 +31,7 @@ def find_source_encoding(src):
     no encoding is found, UTF-8 will be returned as per the docs
     https://docs.python.org/3/howto/unicode.html#unicode-literals-in-python-source-code
     """
-    utf8 = "UTF-8"
+    utf8 = "utf-8-sig"
     first, _, rest = src.partition(b"\n")
     m = ENCODING_LINE.match(first)
     if m is not None:
