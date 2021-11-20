@@ -108,7 +108,8 @@ def get_script_subproc_command(fname, args):
         # Windows can execute various filetypes directly
         # as given in PATHEXT
         _, ext = os.path.splitext(fname)
-        if ext.upper() in XSH.env.get("PATHEXT"):
+        if ext.upper() in XSH.env.get("PATHEXT") and\
+           ext.upper() not in ['.PY','.XSH']: # still need interpeters for these
             return [fname] + args
     # find interpreter
     with open(fname, "rb") as f:
@@ -522,7 +523,9 @@ class SubprocSpec:
             raise xt.XonshError("xonsh: subprocess mode: command is empty")
         bufsize = 1
         try:
-            if xp.ON_WINDOWS and self.binary_loc is not None:
+            if xp.ON_WINDOWS and self.binary_loc is not None and\
+               self.cmd[0].lower() not in ['python','xonsh','python.exe','xonsh.exe']:
+                # need a better way to check if parser has found a shebang to skip this check
                 # launch process using full paths (https://bugs.python.org/issue8557)
                 cmd = [self.binary_loc] + self.cmd[1:]
             else:
