@@ -527,7 +527,8 @@ class SubprocSpec:
                self.cmd[0].lower() not in ['python','xonsh','python.exe','xonsh.exe']:
                 # need a better way to check if parser has found a shebang to skip this check
                 # launch process using full paths (https://bugs.python.org/issue8557)
-                cmd = [self.binary_loc] + self.cmd[1:]
+                # cmd = [self.binary_loc] + self.cmd[1:]
+                cmd = self.cmd # temp fix for breaking shebangs on Windows
             else:
                 cmd = self.cmd
             p = self.cls(cmd, bufsize=bufsize, **kwargs)
