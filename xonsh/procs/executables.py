@@ -74,6 +74,15 @@ def locate_executable(name, env=None):
     """Search executable binary name in ``$PATH`` and return full path."""
     return locate_file(name, env=env, check_executable=True, use_pathext=True)
 
+class PathCleanCache:
+    is_dirty = True
+    @classmethod
+    def get(cls,env):
+        if cls.is_dirty:
+            env_path = env.get("PATH", [])
+            cls.clean_paths = tuple(clear_paths(env_path))
+            cls.is_dirty = False
+        return cls.clean_paths
 
 def locate_file(name, env=None, check_executable=False, use_pathext=False):
     """Search file name in ``$PATH`` and return full path.
@@ -87,9 +96,13 @@ def locate_file(name, env=None, check_executable=False, use_pathext=False):
     The task for reading and returning case sensitive filename we give to completer in interactive mode
     with ``commands_cache``.
     """
-    env = env if env is not None else XSH.env
-    env_path = env.get("PATH", [])
-    paths = tuple(clear_paths(env_path))
+    paths = []
+    if env is None: # for generic environment: use cache
+        env = XSH.env
+        paths = PathCleanCache.get(env)
+    else: #           for custom  environment: clean paths every time
+        env_path = env.get("PATH", [])
+        paths = tuple(clear_paths(env_path))
     possible_names = get_possible_names(name, env) if use_pathext else [name]
 
     for path, possible_name in itertools.product(paths, possible_names):

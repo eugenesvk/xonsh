@@ -28,6 +28,7 @@ from xonsh.ansi_colors import (
 )
 from xonsh.built_ins import XSH
 from xonsh.events import events
+from xonsh.procs.executables import PathCleanCache
 from xonsh.lib.lazyasd import LazyObject, lazyobject
 from xonsh.lib.lazyimps import pyghooks, pygments, winutils
 from xonsh.platform import (
@@ -390,6 +391,7 @@ class ReadlineShell(BaseShell, cmd.Cmd):
             except ImportError:
                 store_in_history = True
             pos = readline.get_current_history_length() - 1
+        PathCleanCache.is_dirty = True
         events.on_pre_prompt_format.fire()
         prompt = self.prompt
         events.on_pre_prompt.fire()

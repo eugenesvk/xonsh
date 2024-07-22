@@ -26,6 +26,7 @@ from prompt_toolkit.styles.pygments import pygments_token_to_classname
 
 from xonsh.built_ins import XSH
 from xonsh.events import events
+from xonsh.procs.executables import PathCleanCache
 from xonsh.lib.lazyimps import pyghooks, pygments, winutils
 from xonsh.platform import HAS_PYGMENTS, ON_POSIX, ON_WINDOWS
 from xonsh.pygments_cache import get_all_styles
@@ -297,6 +298,7 @@ class PromptToolkitShell(BaseShell):
         kwarg flags whether the input should be stored in PTK's in-memory
         history.
         """
+        PathCleanCache.is_dirty = True
         events.on_pre_prompt_format.fire()
         env = XSH.env
         mouse_support = env.get("MOUSE_SUPPORT")
