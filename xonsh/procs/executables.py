@@ -74,15 +74,18 @@ def locate_executable(name, env=None):
     """Search executable binary name in ``$PATH`` and return full path."""
     return locate_file(name, env=env, check_executable=True, use_pathext=True)
 
+
 class PathCleanCache:
     is_dirty = True
+
     @classmethod
-    def get(cls,env):
+    def get(cls, env):
         if cls.is_dirty:
             env_path = env.get("PATH", [])
             cls.clean_paths = tuple(clear_paths(env_path))
             cls.is_dirty = False
         return cls.clean_paths
+
 
 def locate_file(name, env=None, check_executable=False, use_pathext=False):
     """Search file name in ``$PATH`` and return full path.
@@ -97,10 +100,10 @@ def locate_file(name, env=None, check_executable=False, use_pathext=False):
     with ``commands_cache``.
     """
     paths = []
-    if env is None: # for generic environment: use cache
+    if env is None:  # for generic environment: use cache
         env = XSH.env
         paths = PathCleanCache.get(env)
-    else: #           for custom  environment: clean paths every time
+    else:  #           for custom  environment: clean paths every time
         env_path = env.get("PATH", [])
         paths = tuple(clear_paths(env_path))
     possible_names = get_possible_names(name, env) if use_pathext else [name]

@@ -28,7 +28,6 @@ from xonsh.ansi_colors import (
 )
 from xonsh.built_ins import XSH
 from xonsh.events import events
-from xonsh.procs.executables import PathCleanCache
 from xonsh.lib.lazyasd import LazyObject, lazyobject
 from xonsh.lib.lazyimps import pyghooks, pygments, winutils
 from xonsh.platform import (
@@ -39,6 +38,7 @@ from xonsh.platform import (
     ON_WINDOWS,
     os_environ,
 )
+from xonsh.procs.executables import PathCleanCache
 from xonsh.prompt.base import multiline_prompt
 from xonsh.shells.base_shell import BaseShell
 from xonsh.tools import (

@@ -26,9 +26,9 @@ from prompt_toolkit.styles.pygments import pygments_token_to_classname
 
 from xonsh.built_ins import XSH
 from xonsh.events import events
-from xonsh.procs.executables import PathCleanCache
 from xonsh.lib.lazyimps import pyghooks, pygments, winutils
 from xonsh.platform import HAS_PYGMENTS, ON_POSIX, ON_WINDOWS
+from xonsh.procs.executables import PathCleanCache
 from xonsh.pygments_cache import get_all_styles
 from xonsh.shell import transform_command
 from xonsh.shells.base_shell import BaseShell
