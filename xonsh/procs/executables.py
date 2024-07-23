@@ -87,7 +87,9 @@ class PathCleanCache:
         return cls.clean_paths
 
 
-def locate_file(name, env=None, check_executable=False, use_pathext=False, use_path_cache=True):
+def locate_file(
+    name, env=None, check_executable=False, use_pathext=False, use_path_cache=True
+):
     """Search file name in ``$PATH`` and return full path.
 
     Compromise. There is no way to get case sensitive file name without listing all files.
