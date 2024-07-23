@@ -87,7 +87,7 @@ class PathCleanCache:
         return cls.clean_paths
 
 
-def locate_file(name, env=None, check_executable=False, use_pathext=False):
+def locate_file(name, env=None, check_executable=False, use_pathext=False, use_path_cache=True):
     """Search file name in ``$PATH`` and return full path.
 
     Compromise. There is no way to get case sensitive file name without listing all files.
@@ -100,7 +100,7 @@ def locate_file(name, env=None, check_executable=False, use_pathext=False):
     with ``commands_cache``.
     """
     paths = []
-    if env is None:  # for generic environment: use cache
+    if env is None and use_path_cache:  # for generic environment: use cache
         env = XSH.env
         paths = PathCleanCache.get(env)
     else:  #           for custom  environment: clean paths every time
