@@ -72,7 +72,13 @@ is_executable = is_executable_in_windows if ON_WINDOWS else is_executable_in_pos
 
 def locate_executable(name, env=None, use_path_cache=True):
     """Search executable binary name in ``$PATH`` and return full path."""
-    return locate_file(name, env=env, check_executable=True, use_pathext=True, use_path_cache=use_path_cache)
+    return locate_file(
+        name,
+        env=env,
+        check_executable=True,
+        use_pathext=True,
+        use_path_cache=use_path_cache,
+    )
 
 
 class PathCleanCache:
