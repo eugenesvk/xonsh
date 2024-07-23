@@ -101,8 +101,7 @@ def locate_file(name, env=None, check_executable=False, use_pathext=False, use_p
     """
     paths = []
     if env is None and use_path_cache:  # for generic environment: use cache
-        env = XSH.env
-        paths = PathCleanCache.get(env)
+        paths = PathCleanCache.get(XSH.env)
     else:  #           for custom  environment: clean paths every time
         env_path = env.get("PATH", [])
         paths = tuple(clear_paths(env_path))
