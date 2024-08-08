@@ -174,6 +174,7 @@ def hash_s_list(s_list):
     return hash_o.hexdigest()
 
 
+from xonsh.tools import pd
 def locate_file_in_path_env(
     name,
     env=None,
