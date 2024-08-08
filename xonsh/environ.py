@@ -2401,6 +2401,16 @@ class WindowsSetting(Xettings):
         "nbuf=64, bufsize=1024, flags=1)`` from your xonsh RC.",
         is_configurable=ON_WINDOWS,
     )
+    XONSH_WIN_PATH_DIRS_TO_LIST = Var.with_default(
+        set(),
+        "Reduce typing delay via faster 'executable exists' checks."
+        "Color highlighting (green executable) is performend on every typed char,"
+        "which is ~10+ 'file.pathext exists' checks in each directory in PATH on Windows,"
+        "which can be more expensive than simly listing the directory (if it's small)"
+        "and searching in this list."
+        "This variable is a set of paths that should checked via direct listing.",
+        is_configurable=ON_WINDOWS,
+    )
 
 
 class DeprecatedSetting(Xettings):  # sub-classing -> sub-group
