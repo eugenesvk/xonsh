@@ -1595,7 +1595,24 @@ def color_file(file_path: str, path_stat: os.stat_result) -> tuple[_TokenType, s
 # pygments hooks.
 
 
+# pygments hooks.
+import timeit
+from time import monotonic_ns as ttime
+from math import pow
+ns = pow(10,9) # nanosecond, which 'monotonic_ns' are measured in
+
+from xonsh.tools import pd
 def _command_is_valid(cmd):
+    use_dir_session_cache = "XONSH_WIN_DIR_SESSION_CACHE" in XSH.env.keys()
+    t0  = ttime()
+    r1 = locate_executable(cmd, use_dir_session_cache=use_dir_session_cache); t1 = ttime()
+    r2 = cmd in XSH.aliases               #; t2 = ttime() too fast
+    r3 = iskeyword(cmd)                   #; t3 = ttime() too fast
+    t_end = ttime()
+    pd(f"{{:.4f}} exe={r1} cmd={cmd}".format((t1 - t0)/ns))
+    return (r1 or r2) and not r3
+
+def _command_is_valid1(cmd):
     use_dir_session_cache = "XONSH_WIN_DIR_SESSION_CACHE" in XSH.env.keys()
     return (
         cmd in XSH.aliases
