@@ -192,7 +192,7 @@ def is_explicit_path(name):
 
 class PathCache:
     is_dirty = True
-    dir_cache: dict[str, list] = dict()
+    dir_cache: dict[str, list[set, set]] = dict()
 
     @classmethod
     def get_clean(cls, env):
@@ -204,11 +204,11 @@ class PathCache:
 
     @classmethod
     def get_dir_cached(cls, path):
-        return cls.dir_cache.get(path, [])
+        return cls.dir_cache.get(path, [None, None])
 
     @classmethod
-    def set_dir_cached(cls, path, file_list):
-        cls.dir_cache[path] = file_list
+    def set_dir_cached(cls, path, File_set, file_set):
+        cls.dir_cache[path] = [File_set, file_set]
 
 
 def locate_file(
@@ -325,13 +325,14 @@ def locate_file_in_path_env(
 
     for path in paths:
         if dir_to_cache and path in dir_to_cache:  # use session dir cache
-            if not (
-                f := PathCache.get_dir_cached(path)
-            ):  # not cached, scan the dir ...
+            F,f = PathCache.get_dir_cached(path)
+            if not F:  # not cached, scan the dir ...
+                F = set()
                 for _dirpath, _dirnames, filenames in walk(path):
-                    f.extend(filenames)
+                    F = set(filenames)
                     break  # no recursion into subdir
-                PathCache.set_dir_cached(path, f)  # ... and cache it
+                f = {i.lower() for i in F}
+                PathCache.set_dir_cached(path, F, f)  # ... and cache it
             for possible_name in possible_names:
                 if possible_name not in f:
                     continue
@@ -342,10 +343,11 @@ def locate_file_in_path_env(
         elif (
             ext_count > 2 and path_to_list and path in path_to_list
         ):  # list a dir vs checking many files
-            f = []
+            F = set()
             for _dirpath, _dirnames, filenames in walk(path):
-                f.extend(filenames)
+                F = set(filenames)
                 break  # no recursion into subdir
+            f = {i.lower() for i in F}
             for possible_name in possible_names:
                 if possible_name not in f:
                     continue
