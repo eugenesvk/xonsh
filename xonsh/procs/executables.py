@@ -192,7 +192,7 @@ def is_explicit_path(name):
 
 class PathCache:
     is_dirty = True
-    dir_cache = dict()
+    dir_cache: dict[str, list] = dict()
 
     @classmethod
     def get_clean(cls, env):
