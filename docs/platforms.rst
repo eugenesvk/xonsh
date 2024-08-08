@@ -752,6 +752,20 @@ over directly:
     for proc in $(@json osqueryi --json "SELECT pid, name FROM processes ORDER BY pid LIMIT 5"):
         print(proc['pid'], proc['name'])
 
+Reduce typing delay
+^^^^^^^^^^^^^^^^^^^
+
+Typing can be slow due to testing whether the typed text is an executable file
+(for color highlighting), which tests whether a file exists:
+
+- for each of the dozen of dirs in ``PATH``
+
+- for each of 10+ file.pathext
+
+For smaller dirs (~few dozen files) it's faster to list the dir, so you can add such dirs to
+:ref:`$XONSH_WIN_PATH_DIRS_TO_LIST <xonsh_win_path_dirs_to_list>`
+to reduce typing lag
+
 
 See Also
 -----------
