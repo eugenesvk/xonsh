@@ -241,6 +241,7 @@ def locate_file_in_path_env(
                 except ValueError:
                     continue
                 if found := check_possible_name(path, possible_Name, check_executable):
+                    pd(f"dir_to_cache found ={found} from {possible_name}")
                     return found
                 else:
                     continue
@@ -259,12 +260,14 @@ def locate_file_in_path_env(
                 except ValueError:
                     continue
                 if found := check_possible_name(path, possible_Name, check_executable):
+                    pd(f"path_to_list found ={found} from {possible_name}")
                     return found
                 else:
                     continue
         else:  # check that file(s) exists individually
             for possible_name in possible_names:
                 if found := check_possible_name(path, possible_name, check_executable):
+                    pd(f"individually found ={found} from {possible_name}")
                     return found
                 else:
                     continue
