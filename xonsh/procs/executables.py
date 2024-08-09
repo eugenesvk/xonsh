@@ -224,7 +224,11 @@ def locate_file_in_path_env(
     possible_names = get_possible_names(name, env) if use_pathext else [name]
     ext_count = len(possible_names)
 
+    if name in['findme']:
+        pd(f"findme in paths = {paths}")
     for path in paths:
+        if name in['findme']:
+            pd(f"findme in ={path}")
         if 'nircmd' in path and name in['w','W']:
             pd(f"nircmd in ={path} from {paths}")
         if dir_to_cache and path in dir_to_cache:  # use session dir cache
