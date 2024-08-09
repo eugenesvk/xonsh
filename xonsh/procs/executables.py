@@ -227,13 +227,9 @@ def locate_file_in_path_env(
     if name in['findme']:
         pd(f"findme in paths = {paths}")
     for path in paths:
-        if name in['findme']:
-            pd(f"findme in ={path}")
-        if 'nircmd' in path and name in['w','W']:
-            pd(f"nircmd in ={path} from {paths}")
         if dir_to_cache and path in dir_to_cache:  # use session dir cache
-            if 'nircmd' in path:
-                pd(f"dir_to_cache path ={path}")
+            if name in ['w','W','ww']:
+                pd(f"dir_to_cache @ {path}")
             F,f = PathCache.get_dir_cached(path)
             if not F:  # not cached, scan the dir ...
                 F = []
@@ -256,6 +252,8 @@ def locate_file_in_path_env(
         elif (
             ext_count > 2 and path_to_list and path in path_to_list
         ):  # list a dir vs checking many files
+            if name in ['w','W','ww']:
+                pd(f"path_to_list @ {path}")
             F = []
             for _dirpath, _dirnames, filenames in walk(path):
                 F.extend(filenames)
@@ -273,6 +271,8 @@ def locate_file_in_path_env(
                 else:
                     continue
         else:  # check that file(s) exists individually
+            if name in ['w','W','ww']:
+                pd(f"individual.ext checks @ {path}")
             for possible_name in possible_names:
                 if found := check_possible_name(path, possible_name, check_executable):
                     pd(f"individually found ={found} from {possible_name}")
