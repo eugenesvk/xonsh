@@ -334,7 +334,7 @@ def locate_file_in_path_env(
                 f = {i.lower() for i in F}
                 PathCache.set_dir_cached(path, F, f)  # ... and cache it
             for possible_name in possible_names:
-                if possible_name not in f:
+                if possible_name.lower() not in f:
                     continue
                 if found := check_possible_name(path, possible_name, check_executable, check_file_exist=False):
                     return found
@@ -349,7 +349,7 @@ def locate_file_in_path_env(
                 break  # no recursion into subdir
             f = {i.lower() for i in F}
             for possible_name in possible_names:
-                if possible_name not in f:
+                if possible_name.lower() not in f:
                     continue
                 if found := check_possible_name(path, possible_name, check_executable, check_file_exist=False):
                     return found
