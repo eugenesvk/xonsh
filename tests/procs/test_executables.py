@@ -92,6 +92,9 @@ def test_locate_file(tmpdir, xession):
         f = locate_file("findme")
         assert str(f) == str(file)
 
+import  pydebugstring
+def pd(s): #send an object to OutputDebugString
+  pydebugstring.outputDebugString(s)
 
 def test_locate_file_clean_path_cache_time(tmpdir, xession):
     # check that subsequent calls to locate_executable run faster due to use of path cache
@@ -100,24 +103,25 @@ def test_locate_file_clean_path_cache_time(tmpdir, xession):
     from time import monotonic as ttime
 
     ns = pow(10, 0)  # nanosecond, which 'monotonic_ns' are measured in
-    t0 = ttime()
-    _f = locate_executable("nothing")
-    t1 = ttime()
-    dur1 = (t1 - t0) / ns
+    t0 = ttime(); _f = locate_executable("nothing"); t1 = ttime(); dur1 = (t1 - t0) / ns
     t0 = ttime()
     iters = 100
     for _i in range(iters):
-        _f = locate_executable("nothing")
+        f = locate_executable("nothing")
     t1 = ttime()
     dur2 = (t1 - t0) / iters / ns
     env = xession.env
     env_path = env.get("PATH", [])
     if env_path and dur1 > 0:
         print("$PATH length = ", len(env_path))
-        print(f"t1 (no cache) = {dur1:.6f}\nt2 (   cache) = {dur2:.6f}")
+        print(
+            f"t1 (no cache) = {dur1:.6f}\nt2 (   cache) = {dur2:.6f}\nt3 (   cache) = {dur3:.6f}"
+        )
+        pd(f"$PATH length = {len(env_path)}")
+        pd(f"t1 (no cache) = {dur1:.8f}\nt2 (   cache) = {dur2:.8f}")
         assert (
             dur2 < 0.90 * dur1
-        )  # 2nd+ run with cache should always be noticeable faster
+        )  # 2nd run with cache should always be noticeable faster
 
 
 def test_xonsh_win_path_dirs_to_list(tmpdir, xession):
