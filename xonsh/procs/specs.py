@@ -126,8 +126,10 @@ def get_script_subproc_command(fname, args):
         # Windows can execute various filetypes directly
         # as given in PATHEXT
         _, ext = os.path.splitext(fname)
-        if ext.upper() in XSH.env.get("PATHEXT") and\
-           ext.upper() not in ['.PY','.XSH']: # still need interpeters for these
+        if ext.upper() in XSH.env.get("PATHEXT") and ext.upper() not in [
+            ".PY",
+            ".XSH",
+        ]:  # still need interpeters for these
             return [fname] + args, False
     # find interpreter
     shebang = parse_shebang_from_file(fname)
@@ -818,7 +820,9 @@ class SubprocSpec:
         if self.binary_loc is None:
             return
         try:
-            scriptcmd, self.interp = get_script_subproc_command(self.binary_loc, self.cmd[1:])
+            scriptcmd, self.interp = get_script_subproc_command(
+                self.binary_loc, self.cmd[1:]
+            )
             if scriptcmd is not None:
                 self.cmd = scriptcmd
         except PermissionError as ex:
