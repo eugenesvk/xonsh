@@ -1751,7 +1751,7 @@ def _clear_cmd_caches(**kwargs):
     _validation_gen += 1  # Invalidate any in-flight bg thread
 
 
-def _command_is_valid(cmd):
+def _command_is_valid(cmd, partial_match=[]):
     """Check command validity with instant alias/keyword checks.
 
     Only ``locate_executable`` is deferred to a background thread when a
@@ -1765,7 +1765,7 @@ def _command_is_valid(cmd):
         use_dir_session_cache = "XONSH_DIR_SESSION_CACHE" in XSH.env.keys()
         return (
             cmd in XSH.aliases
-            or locate_executable(cmd, use_dir_session_cache=use_dir_session_cache)
+            or locate_executable(cmd, use_dir_session_cache=use_dir_session_cache, partial_match=partial_match)
         )
     if cmd in _cmd_valid_cache:
         return _cmd_valid_cache[cmd]

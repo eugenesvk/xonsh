@@ -162,7 +162,7 @@ def _cached_dir_contains(path: str, filename: str):
     return found, populated
 
 
-def locate_executable(name, env=None, use_path_cache=True, use_dir_session_cache=False, use_perma_cache=False):
+def locate_executable(name, env=None, use_path_cache=True, use_dir_session_cache=False, use_perma_cache=False, partial_match=[]):
     """Search executable binary name in ``$PATH`` and return full path."""
     return locate_file(
         name,
@@ -172,6 +172,7 @@ def locate_executable(name, env=None, use_path_cache=True, use_dir_session_cache
         use_path_cache=use_path_cache,
         use_dir_session_cache=use_dir_session_cache,
         use_perma_cache=use_perma_cache,
+        partial_match=partial_match,
     )
 
 
@@ -226,6 +227,7 @@ def locate_file(
     use_path_cache=True,
     use_dir_session_cache=False,
     use_perma_cache=False,
+    partial_match=[],
 ):
     """Search file name in the current working directory and in ``$PATH`` and return full path.
 
@@ -313,7 +315,8 @@ def locate_file_in_path_env(
     use_pathext=False,
     use_path_cache=True,
     use_dir_session_cache=False,
-    use_perma_cache=False
+    use_perma_cache=False,
+    partial_match=[]
 ):
     """Search file name in ``$PATH`` and return full path.
 
