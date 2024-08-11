@@ -694,6 +694,7 @@ XONSH_BASE_STYLE = LazyObject(
         Operator: "ansibrightblack",
         Operator.Word: "bold ansimagenta",
         Name.Builtin: "ansigreen",
+        Name.Cmdprefix: "underline ansiwhite",
         Name.Function: "ansibrightblue",
         Name.Class: "bold ansibrightblue",
         Name.Namespace: "bold ansibrightblue",
