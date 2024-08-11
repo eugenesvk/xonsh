@@ -1763,6 +1763,7 @@ def _command_is_valid(cmd, partial_match=[]):
         return False
     if 'ignore async cache':
         use_dir_session_cache = "XONSH_DIR_SESSION_CACHE" in XSH.env.keys()
+        use_dir_session_cache = "XONSH_WIN_DIR_SESSION_CACHE" in XSH.env.keys()
         return (
             cmd in XSH.aliases
             or locate_executable(
