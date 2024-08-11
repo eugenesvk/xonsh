@@ -23,8 +23,6 @@ from xonsh.platform import ON_POSIX, ON_WINDOWS, pathbasename
 from xonsh.procs.executables import (
     get_paths,
     get_possible_names,
-    is_executable_in_posix,
-    is_executable_in_windows,
 )
 
 
@@ -83,6 +81,7 @@ class _Commands(tp.NamedTuple):
 
 
 from xonsh.procs.executables import executables_in
+
 
 class CommandsCache(cabc.Mapping):
     """A lazy cache representing the commands available on the file system.
