@@ -13,7 +13,9 @@ authors = [{ name = "Xonsh Maintainers", email = "xore.004fdbd5c8e6589bdd80944b5
 maintainers = [{ name = "Xonsh Maintainers", email = "xore.004fdbd5c8e6589bdd80944b5b8d4100.show-sender@streams.zulipchat.com" }, { name = "Gil Forsyth", email = "xonsh@gil.forsyth.dev" }]
 license = { text = "BSD 2-Clause License" }
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "pygtrie",
+]
 
 [tool.setuptools.dynamic]
 version = {attr = "xonsh.__version__"}
