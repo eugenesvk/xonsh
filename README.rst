@@ -1,3 +1,45 @@
+This fork adds the ability to have no input lag on Windows and also run ``.xsh`` files without a ``[WinError 193] %1 is not a valid Win32 application`` error for testing until they are hopefully merged into main.
+
+TLDR: add some dirs from ``$PATH`` to:
+
+- ``$XONSH_DIR_PERMA_CACHE``: unchanging dirs like ``C:\Windows\System32\`` for permanent caching
+- ``$XONSH_DIR_SESSION_CACHE``: rarely changing dirs for caching per Xonsh session
+- ``$XONSH_DIR_CACHE_TO_LIST``: small dirs (a few dozen files) for full file listing
+
+to remove hundreds of extra IO calls on every keystroke, thus eliminating input lag
+
+------
+
+Reduce typing delay
+^^^^^^^^^^^^^^^^^^^
+
+Typing can be slow due to testing whether the typed text is an executable file
+(for color highlighting), which tests whether a file exists:
+
+- for each of the dozen of dirs in ``PATH``
+
+- for each of 15+ file.pathext
+
+For smaller dirs (~few dozen files) it's faster to list the dir, so you can add such dirs to ``$XONSH_DIR_CACHE_TO_LIST`` to reduce typing lag
+
+And to reduce the typing lag even more (at the cost of a small loss of precision of syntax highlighting) you can list all the rarely changing (like ``C:\Program Files\Python\``) or not very important dirs from your ``$PATH`` in ``$XONSH_DIR_SESSION_CACHE``
+This will cache a list of files within these dirs per Xonsh session and thus avoid any IO checks on subsequent typing. However, if Xonsh or any other process changes the list of files in these dirs, you'll lose the accuracy of syntax highlighting since the cache will not be updated to reflect it
+
+You can also cache large never changing dirs (like ``C:\Windows\System32\`` with thousands of files) permanently by adding them to
+``$XONSH_DIR_PERMA_CACHE`` (stored in ``$XONSH_CACHE_DIR\dir_perma_cache.pickle``)
+
+And for a tiny extra boost you can set ``XONSH_DIR_CACHE_SKIP_EXIST`` to ``True`` to skip an extra
+IO operation by not checking for whether a file exists in the permanent/session cached dirs
+
+------
+
+Highlighting of valid partial commands
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Besides speed (that's mostly relevant to Windows), adding some dirs to any of the cache env vars allows xonsh to know whether your incomplete command is a prefix of a valid command (and highlight i̲t̲) or not — great for catching early typos!
+
+------
+
 xonsh
 =====
 
