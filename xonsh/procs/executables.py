@@ -164,6 +164,11 @@ def _cached_dir_contains(path: str, filename: str):
     return found, populated
 
 
+class CmdPart:
+    def __init__(self, *args, **kwargs):
+        self.is_part: bool = False
+
+
 def locate_executable(
     name,
     env=None,
@@ -556,10 +561,10 @@ def locate_file_in_path_env(
                     else:
                         continue
             if cmd_chartrie.has_subtrie(name.lower()):  # ± partial match
-                if type(partial_match) is list:
-                    partial_match.append(
-                        True
-                    )  # report partial match for color highlighting
+                if isinstance(
+                    partial_match, CmdPart
+                ):  # report partial match for color highlighting
+                    partial_match.is_part = True
         elif (
             use_dir_session_cache and dir_to_cache and path in dir_to_cache
         ):  # use session dir cache
@@ -581,10 +586,10 @@ def locate_file_in_path_env(
                     else:
                         continue
             if f_trie.has_subtrie(name.lower()):  # ± partial match
-                if type(partial_match) is list:
-                    partial_match.append(
-                        True
-                    )  # report partial match for color highlighting
+                if isinstance(
+                    partial_match, CmdPart
+                ):  # report partial match for color highlighting
+                    partial_match.is_part = True
         elif (
             ext_count > 2 and path_to_list and path in path_to_list
         ):  # list a dir vs checking many files
@@ -603,10 +608,10 @@ def locate_file_in_path_env(
                     else:
                         continue
             if f_trie.has_subtrie(name.lower()):  # ± partial match
-                if type(partial_match) is list:
-                    partial_match.append(
-                        True
-                    )  # report partial match for color highlighting
+                if isinstance(
+                    partial_match, CmdPart
+                ):  # report partial match for color highlighting
+                    partial_match.is_part = True
         else:  # check that file(s) exists individually
             for possible_name in possible_names:
                 if found := check_possible_name(path, possible_name, check_executable, check_file_exist=False):
