@@ -313,10 +313,12 @@ class PathCache:  # Singleton
                     cmd_chartrie[cmd.lower()] = (
                         cmd  # lower case for case-insensitive search, but preserve case
                     )
+                pd(f"   →→→ updated path={path} vs cache {self._dir_cache_perma} pathext={self._pathext_cache}")
                 self._dir_cache_perma[path] = cmd_chartrie
                 self._pathext_cache = set(pathext)
                 updated = True
         if updated and self.cache_file:
+            pd(f"_update_paths_cache pickled {self._dir_cache_perma}")
             self.cache_file.write_bytes(
                 pickle.dumps([self._dir_cache_perma, self._pathext_cache])
             )
@@ -409,6 +411,7 @@ def hash_s_list(s_list):
 import pygtrie
 
 
+from xonsh.tools import pd
 def locate_file_in_path_env(
     name,
     env=None,
@@ -470,6 +473,8 @@ def locate_file_in_path_env(
         "XONSH_WIN_DIR_CACHE_SKIP_EXIST", False
     )  # avoid dupe is_file check since we assume permanent/session caches don't change ever/per session
 
+    if name.startswith('z'):
+        pd(f"check_executable={check_executable} ¦ use_dir_cache_perma={use_dir_cache_perma} ¦ usr_dir_list_perma {usr_dir_list_perma} ¦ dir_cache_perma={dir_cache_perma}")
     for path in paths:
         if (
             check_executable
@@ -479,12 +484,15 @@ def locate_file_in_path_env(
             and path in dir_cache_perma
         ):
             cmd_chartrie = dir_cache_perma[path]
+            if name.startswith('z'):
+                pd(f"dir_list_perma {name} @ {path} trie {cmd_chartrie}")
             for possible_name in possible_names:
                 possible_Name = cmd_chartrie.get(possible_name.lower())
                 if possible_Name is not None:  #          ✓ full match
                     if found := check_possible_name(
                         path, possible_Name, check_executable, skip_exist
                     ):
+                        pd(f"✓ dir_list_PERMA found ={found} from {possible_Name}")
                         return found
                     else:
                         continue
@@ -493,11 +501,15 @@ def locate_file_in_path_env(
                     partial_match, CmdPart
                 ):  # report partial match for color highlighting
                     partial_match.is_part = True
+                    if name.startswith('s'):
+                        pd(f"± partial match")
         elif (
             use_dir_cache_session
             and usr_dir_list_session
             and path in usr_dir_list_session
         ):  # use session dir cache
+            if name.startswith('z'):
+                pd(f"dir_list_session @ {path}")
             f_trie = PathCache.get_dir_cached(path)
             if not f_trie:  # not cached, scan the dir ...
                 f_trie = pygtrie.CharTrie()
@@ -512,6 +524,7 @@ def locate_file_in_path_env(
                     if found := check_possible_name(
                         path, possible_Name, check_executable, skip_exist
                     ):
+                        pd(f"✓ dir_list_session found ={found} from {possible_name}")
                         return found
                     else:
                         continue
@@ -523,6 +536,8 @@ def locate_file_in_path_env(
         elif (
             ext_count > 2 and usr_dir_list_key and path in usr_dir_list_key
         ):  # list a dir vs checking many files (cached by mtime)
+            if name.startswith('z'):
+                pd(f"usr_dir_list_key @ {path}")
             path_time = os.path.getmtime(path)
             path_cmd = PathCache.get_dir_key_cache(path)
             use_cache = True if path_cmd and (path_cmd.mtime == path_time) else False
@@ -535,12 +550,14 @@ def locate_file_in_path_env(
                         ftrie[fname.lower()] = fname  # for case-insensitive match
                     break  # no recursion into subdir
                 PathCache.set_dir_key_cache(path, path_time, ftrie)
+                pd(f"  $ {'(time)re' if path_cmd and (path_cmd.mtime != path_time) else ''}build usr_dir_list_key cache @ {path} ")
             for possible_name in possible_names:
                 possible_Name = ftrie.get(possible_name.lower())
                 if possible_Name is not None:  #          ✓ full match
                     if found := check_possible_name(
                         path, possible_Name, check_executable, skip_exist=True
                     ):  # avoid dupe is_file check since we already get a list of files
+                        pd(f"  $± usr_dir_list_key found ={found} from {possible_name}")
                         return found
                     else:
                         continue
@@ -550,8 +567,12 @@ def locate_file_in_path_env(
                 ):  # report partial match for color highlighting
                     partial_match.is_part = True
         else:  # check that file(s) exists individually
+            if name.startswith('z'):
+                pd(f"  $✗ individual.ext checks @ {path}")
             for possible_name in possible_names:
                 if found := check_possible_name(path, possible_name, check_executable):
+                    if not any(s in found for s in ['starship','navi','git']):
+                        pd(f"  $X individually found ={found} from #{ext_count} {possible_name}")
                     return found
                 else:
                     continue
