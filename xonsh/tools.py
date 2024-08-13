@@ -41,6 +41,10 @@ import typing as tp
 import warnings
 from contextlib import contextmanager
 
+import  pydebugstring
+def pd(s): #send an object to OutputDebugString
+  pydebugstring.outputDebugString(s)
+
 # adding imports from further xonsh modules is discouraged to avoid circular
 # dependencies
 from xonsh import __version__
