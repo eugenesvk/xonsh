@@ -34,7 +34,12 @@ class _Commands(tp.NamedTuple):
 
 from xonsh.procs.executables import executables_in
 
+import timeit
+from time import monotonic_ns as ttime
+from math import pow
+ns = pow(10,9) # nanosecond, which 'monotonic_ns' are measured in
 
+from xonsh.tools import pd
 class CommandsCache(cabc.Mapping):
     """A lazy cache representing the commands available on the file system.
     The keys are the command names and the values a tuple of (loc, has_alias)
@@ -123,8 +128,13 @@ class CommandsCache(cabc.Mapping):
         Be careful in this place. Both `_update_*` functions must be called
         because they are changing state after update.
         """
+        t0 = ttime()
         is_aliases_change = self._update_aliases_cache()
+        t1 = ttime(); dur1 = (t1 - t0) / ns
+        t0 = ttime()
         is_paths_change = self._update_paths_cache(paths)
+        t1 = ttime(); dur2 = (t1 - t0) / ns
+        pd(f"_update_aliases_cache {dur1} _update_paths_cache {dur2}")
         return is_aliases_change or is_paths_change
 
     @property
@@ -159,11 +169,17 @@ class CommandsCache(cabc.Mapping):
         Usage ``executables`` is preferred instead of commands_cache for cases
         where you just need to locate executable command.
         """
+        t0  = ttime();
         env = self.env
         # iterate backwards so that entries at the front of PATH overwrite
         # entries at the back.
         paths = get_paths(env)
-        if self._update_and_check_changes(paths):
+        t1 = ttime(); dur1 = (t1 - t0) / ns
+        t0  = ttime();
+        is_upd = self._update_and_check_changes(paths)
+        t1 = ttime(); dur2 = (t1 - t0) / ns
+        t0  = ttime();
+        if is_upd:
             all_cmds = CacheDict()
             for cmd, path in self._iter_binaries(paths):
                 # None     -> not in aliases
@@ -185,19 +201,27 @@ class CommandsCache(cabc.Mapping):
                     # True -> pure alias
                     all_cmds[cmd] = (cmd, True)
             self._cmds_cache = all_cmds
+        t2 = ttime(); dur3 = (t1 - t0) / ns
+        pd(f"commands cache updated paths {dur1} _update_and_check_changes {dur2} rest {dur3}")
         return self._cmds_cache
 
     def _update_paths_cache(self, paths: tp.Sequence[str]) -> bool:
         """load cached results or update cache"""
+        pd(f"_update_paths_cache: cache {self._paths_cache} file {self.cache_file}")
         if (not self._paths_cache) and self.cache_file and self.cache_file.exists():
             # first time load the commands from cache-file if configured
             try:
                 self._paths_cache = pickle.loads(self.cache_file.read_bytes()) or {}
+                pd(f"cmd cache: unpickled {self.cache_file}")
             except Exception:
                 # the file is corrupt
                 self.cache_file.unlink(missing_ok=True)
 
         updated = False
+        t0 = ttime()
+        for path in paths:
+            modified_time = os.path.getmtime(path)
+        t1 = ttime(); dur1 = (t1 - t0) / ns
         for path in paths:
             modified_time = os.path.getmtime(path)
             if (
@@ -205,10 +229,12 @@ class CommandsCache(cabc.Mapping):
                 or (path not in self._paths_cache)
                 or (self._paths_cache[path].mtime != modified_time)
             ):
+                pd(f"updated cache for {path}")
                 updated = True
                 self._paths_cache[path] = _Commands(
                     modified_time, tuple(executables_in(path))
                 )
+        pd(f"got all mtime for #{len(paths)} in {dur1}")
 
         if updated and self.cache_file:
             self.cache_file.write_bytes(pickle.dumps(self._paths_cache))
