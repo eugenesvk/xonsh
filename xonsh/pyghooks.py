@@ -1743,6 +1743,8 @@ class XonshLexer(Python3Lexer):
             cmd_is_valid = _command_is_valid(cmd, partial_match)
             cmd_is_autocd = _command_is_autocd(cmd)
 
+            ret_scope = Name.Builtin if cmd_is_valid else Name.Cmdprefix if partial_match.is_part else Name.Constant
+            # pd(f" get_tok_unproc ¦{cmd}¦ valid?={cmd_is_valid} partial?={partial_match.is_part} scope={ret_scope}")
             if cmd_is_valid or cmd_is_autocd or partial_match.is_part:
                 yield (
                     m.start(2),
