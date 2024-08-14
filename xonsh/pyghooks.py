@@ -1601,6 +1601,9 @@ ns = pow(10,9) # nanosecond, which 'monotonic_ns' are measured in
 
 from xonsh.tools import pd
 def _command_is_valid(cmd, partial_match=None):
+    t0  = ttime()
+    XSH.commands_cache.update_cache()
+    t1 = ttime(); dur0 = (t1 - t0) / ns
     use_dir_cache_session = "XONSH_WIN_DIR_SESSION_CACHE" in XSH.env.keys()
     use_dir_cache_perma = "XONSH_WIN_DIR_PERMA_CACHE" in XSH.env.keys()
     t0  = ttime()
@@ -1610,7 +1613,7 @@ def _command_is_valid(cmd, partial_match=None):
             use_dir_cache_perma=use_dir_cache_perma,
             partial_match=partial_match,
         ); t1 = ttime(); dur1 = (t1 - t0) / ns
-    pd(f"{{:.4f}} exe={r1} cmd={cmd}".format(dur1))
+    pd(f"{{:.4f}} exe={r1} cmd={cmd} cach_upd={{:.4f}}".format(dur1,dur0))
     return (
         cmd in XSH.aliases
         or r1
