@@ -1572,14 +1572,13 @@ class CacheSetting(Xettings):
     )
 
 
-    XONSH_WIN_DIR_SESSION_CACHE = Var.with_default(
+    XONSH_DIR_SESSION_CACHE = Var.with_default(
         set(),
-        "Reduce typing delay via faster 'executable exists' checks for syntax highlighting."
+        "(Win) Reduce typing delay via faster 'executable exists' checks for syntax highlighting."
         "Cache a list of files in these dirs for the duration of Xonsh session to avoid"
         "re-checking whether an executable exists on every keystroke."
         "This is a 'lossy' option, if xonsh or another process changes the files,"
         "syntax highlighting will be wrong, but it may still be worth the lower input lag.",
-        is_configurable=ON_WINDOWS,
     )
 
     XONSH_DIR_CACHE_TO_LIST = Var.with_default(
