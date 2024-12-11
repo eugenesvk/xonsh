@@ -1287,6 +1287,7 @@ class CacheSetting(Xettings):
         "This variable is a set of paths that should checked via direct listing.",
     )
 
+
 class ChangeDirSetting(Xettings):
     """``cd`` Behavior"""
 
