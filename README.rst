@@ -38,6 +38,8 @@ Highlighting of valid partial commands
 
 Besides speed (that's mostly relevant to Windows), adding some dirs to any of the cache env vars allows xonsh to know whether your incomplete command is a prefix of a valid command (and highlight i̲t̲) or not — great for catching early typos!
 
+https://github.com/user-attachments/assets/b8138c98-614a-4b94-9696-e5e80f4b0a15
+
 ------
 
 xonsh
