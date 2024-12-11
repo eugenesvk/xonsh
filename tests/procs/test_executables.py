@@ -206,8 +206,8 @@ def test_stable_dir_cache_skips_directories(tmpdir, xession):
         assert locate_executable(exe_name) is not None
 
 
-def test_xonsh_win_path_dirs_to_list(tmpdir, xession):
-    # check that adding smaller dirs to a XONSH_WIN_PATH_DIRS_TO_LIST var to list them
+def test_xonsh_dir_cache_to_list(tmpdir, xession):
+    # check that adding smaller dirs to a XONSH_DIR_CACHE_TO_LIST var to list them
     # instead of checking for the existence of every file.pathext
     # is faster
     if not ON_WINDOWS:
@@ -243,28 +243,28 @@ def test_xonsh_win_path_dirs_to_list(tmpdir, xession):
         )
         return
 
-    xonsh_win_path_dirs_to_list = []
+    xonsh_dir_cache_to_list = []
     for path in env_path:
         f = []
         for _dirpath, _dirnames, filenames in walk(path):
             f.extend(filenames)
             break
         if len(f) < short_path:
-            xonsh_win_path_dirs_to_list += [path.rstrip(os.path.sep)]
+            xonsh_dir_cache_to_list += [path.rstrip(os.path.sep)]
 
     from math import pow
     from time import monotonic_ns as ttime
 
     ns = pow(10, 9)  # nanosecond, which 'monotonic_ns' are measured in
 
-    env["XONSH_WIN_PATH_DIRS_TO_LIST"] = None
+    env["XONSH_DIR_CACHE_TO_LIST"] = None
     t0 = ttime()
     for _i in range(100):
         f = locate_executable("nothing")
     t1 = ttime()
     dur1 = (t1 - t0) / ns
 
-    env["XONSH_WIN_PATH_DIRS_TO_LIST"] = xonsh_win_path_dirs_to_list
+    env["XONSH_DIR_CACHE_TO_LIST"] = xonsh_dir_cache_to_list
     t0 = ttime()
     for _i in range(100):
         f = locate_executable("nothing")
@@ -272,7 +272,7 @@ def test_xonsh_win_path_dirs_to_list(tmpdir, xession):
     dur2 = (t1 - t0) / ns
 
     print(
-        f"{len(pathext)} file.exists checks; {len(xonsh_win_path_dirs_to_list)} paths with <{short_path} items from ∑{len(env_path)}"
+        f"{len(pathext)} file.exists checks; {len(xonsh_dir_cache_to_list)} paths with <{short_path} items from ∑{len(env_path)}"
     )
     print(f"🕐{dur1:.6f}\t(file.ext)\n🕐{dur2:.6f}\t(list small dirs)\t")
     assert dur2 < 0.90 * dur1  # listing method should be noticeable faster
