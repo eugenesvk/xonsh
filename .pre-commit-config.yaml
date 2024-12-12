@@ -5,6 +5,9 @@ default_language_version:
 #ci:
 #  autofix_prs: false
 
+# all to match default
+default_stages: [commit-msg, post-checkout, post-commit, post-merge, post-rewrite, pre-commit, pre-merge-commit, pre-push, pre-rebase, prepare-commit-msg]
+
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
@@ -13,9 +16,11 @@ repos:
       - id: ruff
         args: [., --fix, --exit-non-zero-on-fix]
         pass_filenames: false
+        stages: [manual, commit-msg, post-checkout, post-commit, post-merge, post-rewrite, pre-commit, pre-merge-commit, pre-push, pre-rebase, prepare-commit-msg]
       - id: ruff-format
         args: ["xonsh", "xontrib", "tests", "xompletions"]
         pass_filenames: false
+        stages: [manual, commit-msg, post-checkout, post-commit, post-merge, post-rewrite, pre-commit, pre-merge-commit, pre-push, pre-rebase, prepare-commit-msg]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: 'v1.13.0'  # Use the sha / tag you want to point at
