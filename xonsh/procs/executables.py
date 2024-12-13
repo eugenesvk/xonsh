@@ -173,6 +173,7 @@ def locate_executable(
     name,
     env=None,
     use_path_cache=True,
+    path_cache_dirty=False,
     use_dir_cache_session=False,
     use_dir_cache_perma=False,
     partial_match=None,
@@ -184,6 +185,7 @@ def locate_executable(
         check_executable=True,
         use_pathext=True,
         use_path_cache=use_path_cache,
+        path_cache_dirty=path_cache_dirty,
         use_dir_cache_session=use_dir_cache_session,
         use_dir_cache_perma=use_dir_cache_perma,
         partial_match=partial_match,
@@ -533,6 +535,7 @@ def locate_file(
     check_executable=False,
     use_pathext=False,
     use_path_cache=True,
+    path_cache_dirty=False,
     use_dir_cache_session=False,
     use_dir_cache_perma=False,
     partial_match=None,
@@ -555,6 +558,7 @@ def locate_file(
         check_executable,
         use_pathext,
         use_path_cache,
+        path_cache_dirty,
         use_dir_cache_session,
         use_dir_cache_perma,
         partial_match,
@@ -633,6 +637,7 @@ def locate_file_in_path_env(
     check_executable=False,
     use_pathext=False,
     use_path_cache=True,
+    path_cache_dirty=False,
     use_dir_cache_session=False,
     use_dir_cache_perma=False,
     partial_match=None,
@@ -662,7 +667,8 @@ def locate_file_in_path_env(
     if env is None:
         env = XSH.env
         if use_path_cache:  # for generic environment: use cache only if configured
-            # avoid clear_paths IO, if env_path Δ, use last cached one, .is_dirty is reponsible for updating the cache (on each prompt)
+            if not path_cache_dirty:  # avoid clear_paths IO
+                PathCache.is_dirty = True  # updates path hash (≝each prompt)
             paths = PathCache.get_clean_path(env)
         else:  #              otherwise              : clean paths
             env_path = env.get("PATH", [])
