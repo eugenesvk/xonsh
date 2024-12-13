@@ -286,7 +286,7 @@ def test_xonsh_dir_cache_to_list(tmpdir, xession):
 
     ns = pow(10, 9)  # nanosecond, which 'monotonic_ns' are measured in
 
-    env["XONSH_DIR_CACHE_TO_LIST"] = None
+    env["XONSH_DIR_CACHE_TO_LIST"] = set()
     t0 = ttime()
     for _i in range(100):
         f = locate_executable("nothing")
@@ -335,7 +335,7 @@ def test_xonsh_dir_session_cache(tmpdir, xession):
 
     ns = pow(10, 9)  # nanosecond, which 'monotonic_ns' are measured in
 
-    env["XONSH_DIR_SESSION_CACHE"] = None
+    env["XONSH_DIR_SESSION_CACHE"] = set()
     t0 = ttime()
     for _i in range(100):
         f = locate_executable("nothing", use_dir_cache_session=True)
@@ -400,7 +400,7 @@ def test_xonsh_dir_perma_cache(tmpdir, xession):
 
     ns = pow(10, 9)  # nanosecond, which 'monotonic_ns' are measured in
 
-    env["XONSH_DIR_PERMA_CACHE"] = None
+    env["XONSH_DIR_PERMA_CACHE"] = set()
     t0 = ttime()
     for _i in range(100):
         f = locate_executable("nothing", use_dir_cache_perma=False)
