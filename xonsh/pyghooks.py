@@ -1762,8 +1762,8 @@ def _command_is_valid(cmd, partial_match=None):
     if iskeyword(cmd):
         return False
     if 'ignore async cache':
-        use_dir_cache_session = "XONSH_DIR_SESSION_CACHE" in XSH.env.keys()
-        use_dir_cache_perma = "XONSH_DIR_PERMA_CACHE" in XSH.env.keys()
+        use_dir_cache_session = True if XSH.env.get("XONSH_DIR_SESSION_CACHE", False) else False
+        use_dir_cache_perma = True if XSH.env.get("XONSH_DIR_PERMA_CACHE", False) else False
         return (
             cmd in XSH.aliases
             or locate_executable(
