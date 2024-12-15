@@ -6,6 +6,7 @@ import pickle
 import sys
 import typing as tp
 from pathlib import Path
+from os.path import normpath
 
 import pygtrie
 
@@ -288,6 +289,8 @@ class PathCache:  # Singleton
     dir_cache: dict[str, list[list[str]]] = dict()
     dir_key_cache: dict[str, _PathCmd] = dict()
     clean_paths: dict[str, tuple[str]] = dict()
+    CACHE_FILE = "dir_perma_cache.pickle"
+    CACHE_FILE_LISTED = "dir_listed_cache.pickle"
 
     @classmethod
     def reset(cls, delfiles: bool = False):
@@ -484,9 +487,6 @@ class PathCache:  # Singleton
                 msg += ":\n"
                 msg += "\n  ".join(self.cwd_too_long)
         print(msg)
-
-    CACHE_FILE = "dir_perma_cache.pickle"
-    CACHE_FILE_LISTED = "dir_listed_cache.pickle"
 
     def __init__(self, env) -> None:
         self.__is_init: bool
