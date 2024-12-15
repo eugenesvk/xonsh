@@ -7,6 +7,8 @@ from xonsh.procs.executables import (
     get_possible_names,
     locate_executable,
     locate_file,
+    locate_relative_path,
+    locate_file_in_path_env,
 )
 from xonsh.tools import chdir
 
@@ -275,13 +277,12 @@ skip_if_no_xonsh = pytest.mark.skipif(
 
 
 @skip_if_no_xonsh
-@skip_if_on_unix
 def test_xonsh_dir_perma_cache(tmpdir, xession):
     # check that adding dirs to a XONSH_DIR_PERMA_CACHE var to cache a list of files in
     # them permanently instead of checking for the existence of every file.pathext
     # is faster
-    if not ON_WINDOWS:  # other OS use this for syntax checking benefit, not speed
-        return
+    # if not ON_WINDOWS:  # other OS use this for syntax checking benefit, not speed
+        # return
 
     from os import walk
 
@@ -312,10 +313,23 @@ def test_xonsh_dir_perma_cache(tmpdir, xession):
 
     env["XONSH_DIR_PERMA_CACHE"] = xonsh_dir_perma_cache
     PathCache.reset()  # previous benchmark set our singleton with an empty DIR_CACHE
-    f = locate_executable("nothing", use_dir_cache_perma=True)  # to cache dirs
+    name	= "nothing"
+    env                 = None
+    check_executable	= True
+    use_path_cache          = True
+    use_dir_cache_perma  	= True
+    path_cache_dirty     	= True
+    use_dir_cache_session	= False
+    partial_match        	= None
+    use_pathext=False
+    f = locate_executable(name, use_dir_cache_perma=True)  # to cache dirs
+    print("————————————————   preloaded")
     t0 = ttime()
-    for _i in range(100):
-        f = locate_executable("nothing", use_dir_cache_perma=True)
+    for _i in range(2):
+        # f = locate_executable("nothing", use_dir_cache_perma=True, path_cache_dirty=True)
+        # f = locate_file(name,env,check_executable,use_path_cache,use_dir_cache_perma,path_cache_dirty,use_dir_cache_session,partial_match)
+        # f = locate_relative_path(name, env, check_executable, use_pathext, partial_match)
+        f = locate_file_in_path_env(name,env,check_executable,use_path_cache,use_dir_cache_perma,path_cache_dirty,use_dir_cache_session,partial_match)
     t1 = ttime()
     dur2 = (t1 - t0) / ns
 
@@ -324,3 +338,4 @@ def test_xonsh_dir_perma_cache(tmpdir, xession):
     )
     print(f"🕐{dur1:.6f}\t(file.ext)\n🕐{dur2:.6f}\t(cache dirs)\t")
     assert dur2 < 0.90 * dur1  # caching dirs should be noticeable faster
+    assert 1 == 2
