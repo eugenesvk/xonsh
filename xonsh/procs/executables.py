@@ -4,8 +4,8 @@ import os
 import pickle
 import sys
 import typing as tp
-from pathlib import Path
 from os.path import normpath
+from pathlib import Path
 
 import pygtrie
 
@@ -199,8 +199,8 @@ class PathCache:  # Singleton
 
     @classmethod
     def reset(cls, delfiles: bool = False):
-        """ Clean PathCache to allow creating a new one with a different env
-            delfiles: Also delete cached files
+        """Clean PathCache to allow creating a new one with a different env
+        delfiles: Also delete cached files
         """
         self = cls._instance
         if self:
@@ -216,7 +216,6 @@ class PathCache:  # Singleton
                     self.cache_file.unlink(missing_ok=True)
                 if self.cache_file_listed and self.cache_file_listed.exists():
                     self.cache_file_listed.unlink(missing_ok=True)
-
 
     @classmethod
     def get_clean_paths(cls, env):  # cleaned paths (not files/cmds)
@@ -417,8 +416,7 @@ class PathCache:  # Singleton
         self.__is_init = True
 
     def set_usr_dir_list(self, env) -> None:
-        """ Clean up user lists of dirs-to-be-cached and save them. Also include dirs not in PATH since they can be added to PATH later (even on startup by a plugin).
-        """
+        """Clean up user lists of dirs-to-be-cached and save them. Also include dirs not in PATH since they can be added to PATH later (even on startup by a plugin)."""
         if self.__class__.is_dirty:
             dir_list = env.get("XONSH_DIR_PERMA_CACHE", [])
             if not dir_list == self._usr_dir_list_perma:
