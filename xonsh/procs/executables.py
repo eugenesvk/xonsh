@@ -148,6 +148,15 @@ def _yield_accessible_unix_file_names(path):
             yield file_.name
 
 
+from enum import auto, Flag, IntFlag
+class CacheT(Flag):
+  #↓ unique modes	          ↓ abbreviations
+  Permanent      	= auto(); Perma	= Permanent; P	= Permanent
+  Listed         	= auto(); Mtime	= Listed   ; L	= Listed; M	= Listed
+  Session        	= auto(); Sess 	= Session  ; S	= Session
+  #↓ combo       	abbreviations
+  All            	= P | L | S
+
 import threading
 
 
