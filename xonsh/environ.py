@@ -1300,6 +1300,11 @@ class CacheSetting(Xettings):
         "(Mac/Linux) cached dirs provide a syntax highlighting benefit: see `XONSH_DIR_PERMA_CACHE`. "
         "To get info about the current state of path cache, see ``xonsh.procs.executables.get_cache_info``. ",
     )
+    XONSH_DIR_SESSION_CACHE_SHARE = Var.with_default(
+        False,
+        "Save cached dirs to file on session startup and delete on session end "
+        "to allow sharing the same cache across multiple sessions. ",
+    )
 
     XONSH_DIR_CWD_CACHE = Var.with_default(
         False,
