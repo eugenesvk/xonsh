@@ -301,6 +301,7 @@ class PathCache:  # Singleton
         """
         if hasattr(cls, "_instance"):
             self = cls._instance
+            assert self is not None
             # cls._instance.__is_init = False
             cls._instance = None
             cls.is_dirty = True
@@ -372,6 +373,7 @@ class PathCache:  # Singleton
         env = cls.env
         if hasattr(cls, "_instance"):
             self = cls._instance
+            assert self is not None
         else:
             self = None
             print_color(
@@ -876,6 +878,7 @@ class PathCache:  # Singleton
         """Load cached 'Listed' dirs to file (on startup not to dupe-list dir if no mtime changed)"""
         if hasattr(cls, "_instance"):
             self = cls._instance
+            assert self is not None
         else:
             return
         dir_cache, pathext_cache = None, None
@@ -906,6 +909,7 @@ class PathCache:  # Singleton
         """Save cached 'Listed' dirs to file (on exit)"""
         if hasattr(cls, "_instance"):
             self = cls._instance
+            assert self is not None
         else:
             return
         dir_cache = cls.dir_key_cache
