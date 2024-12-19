@@ -183,11 +183,13 @@ class PathCache:  # Singleton
     is_dirty = True  # signal to refresh cleaned paths (not files/cmds)
     last_path_hash: str = ""  # avoid the risk of IO on keystroke of clearing Δ paths
     dir_cache_perma: dict[str, pygtrie.CharTrie] = dict()
-    dir_cache: dict[str, list[list[str]]] = dict()
+    dir_cache: dict[str, pygtrie.CharTrie] = dict()
     dir_key_cache: dict[str, _PathCmd] = dict()
     clean_paths: dict[str, tuple[str]] = dict()
+    lock_session = False
     CACHE_FILE = "dir_perma_cache.pickle"
     CACHE_FILE_LISTED = "dir_listed_cache.pickle"
+    CACHE_FILE_SESSION = "dir_session_cache.pickle"
 
     @classmethod
     def reset(cls, delfiles: bool = False):
@@ -208,6 +210,8 @@ class PathCache:  # Singleton
                     self.cache_file.unlink(missing_ok=True)
                 if self.cache_file_listed and self.cache_file_listed.exists():
                     self.cache_file_listed.unlink(missing_ok=True)
+                if self.cache_file_session and self.cache_file_session.exists():
+                    self.cache_file_session.unlink(missing_ok=True)
 
     @classmethod
     def get_clean_paths(cls, env):  # cleaned paths (not files/cmds)
@@ -605,6 +609,7 @@ class PathCache:  # Singleton
         # file paths storing [dir_cache,pathext_cache] for pre-loading
         self._cache_file = None
         self._cache_file_listed = None
+        self._cache_file_session = None
         self._cmds_cache: pygtrie.CharTrie = pygtrie.CharTrie()
         self._pathext_cache: set = set()
         self._pathext_cache_list: set = set()
@@ -689,6 +694,21 @@ class PathCache:  # Singleton
             else:
                 self._cache_file_listed = ""  # set a falsy value other than None
         return self._cache_file_listed
+
+    @property
+    def cache_file_session(self):
+        """Path to the cache file with "session" dir info (on instance-attr)"""
+        env = self.__class__.env
+        if self._cache_file_session is None:
+            if env.get("XONSH_CACHE_DIR") and env.get("XONSH_DIR_SESSION_CACHE"):
+                self._cache_file_session = (
+                    Path(env["XONSH_CACHE_DIR"])
+                    .joinpath(self.CACHE_FILE_SESSION)
+                    .resolve()
+                )
+            else:
+                self._cache_file_session = ""  # set a falsy value other than None
+        return self._cache_file_session
 
     def get_dir_cache_perma(self, was_dirty: bool = False):
         """Get a list of valid commands per path in a trie data structure for partial matching
@@ -810,6 +830,38 @@ class PathCache:  # Singleton
                     f"Failed to save 'Listed' dir cache it @ {self.cache_file_listed}: {e}",
                     file=sys.stderr,
                 )
+
+    @classmethod
+    def save_cache_session(cls):
+        """Save cached 'Session' dirs to file (on startup)"""
+        self = cls._instance
+        if not self:
+            return
+        dir_cache = cls.dir_cache
+    dir_cache: dict[str, list[list[str]]] = dict()
+
+        pathext_cache = set(cls.env.get("PATHEXT", [])) if ON_WINDOWS else set()
+        if self.cache_file_session:
+            try:  # save commands to cache-file if configured
+                self.cache_file_session.write_bytes(
+                    pickle.dumps([dir_cache, pathext_cache])
+                )
+            except Exception as e:
+                print(
+                    f"Failed to save 'Session' dir cache it @ {self.cache_file_session}: {e}",
+                    file=sys.stderr,
+                )
+
+    @classmethod
+    def del_cache_session(cls):
+        """Delete file with cached Session dirs (on exit)"""
+        self = cls._instance
+        if not self:
+            return
+        if not cls.lock_session:
+            return  # we didn't create the file, so we shouldn't remove it
+        if self.cache_file_session and self.cache_file_session.exists():
+            self.cache_file_session.unlink(missing_ok=True)
 
     def _iter_binaries(self, paths):
         for path in paths:
