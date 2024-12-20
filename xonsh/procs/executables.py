@@ -256,7 +256,7 @@ def _yield_accessible_unix_file_names(path):
 
 
 import threading
-from concurrent.futures import ThreadPoolExecutor, Future
+from concurrent.futures import Future, ThreadPoolExecutor
 
 
 class _PathCmd(tp.NamedTuple):
