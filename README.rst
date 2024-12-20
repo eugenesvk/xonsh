@@ -3,10 +3,12 @@ This fork adds the ability to have no input lag on Windows and also run ``.xsh``
 TLDR: add some dirs from ``$PATH`` to:
 
 - ``$XONSH_DIR_PERMA_CACHE``: unchanging dirs like ``C:\Windows\System32\`` for permanent caching
-- ``$XONSH_DIR_SESSION_CACHE``: rarely changing dirs for caching per Xonsh session
+- ``$XONSH_DIR_CACHE_TO_ALIST``: dirs with (almost) all executables, faster vs ↓
 - ``$XONSH_DIR_CACHE_TO_LIST``: small dirs (a few dozen files) for full file listing
+- ``$XONSH_DIR_SESSION_CACHE``: rarely changing dirs for caching per Xonsh session
 
-to remove hundreds of extra IO calls on every keystroke, thus eliminating input lag
+Run ``from xonsh.procs.executables import PathCache; pc = PathCache; pc.help_me_choose()`` to see auto-suggestions re. which dirs from ``$PATH`` could be added to which cache.
+And ``from xonsh.procs.executables import PathCache; pc = PathCache(None); pc.get_cache_info(v=2)`` for a detailed overview of which dirs are cached where.
 
 ------
 
@@ -20,7 +22,7 @@ Typing can be slow due to testing whether the typed text is an executable file
 
 - for each of 15+ file.pathext
 
-For smaller dirs (~few dozen files) it's faster to list the dir, so you can add such dirs to ``$XONSH_DIR_CACHE_TO_LIST`` to reduce typing lag
+For smaller dirs (~few dozen files) it's faster to list the dir and check whether each file is an executable, so you can add such dirs to ``$XONSH_DIR_CACHE_TO_LIST`` to reduce typing lag. But even for bigger dirs, since the list is cached until the dir changes, and the cache is updated on prompt refresh instead of on each typed char, it still makes sense to add them to the cache. And for dirs with (almost) all executable files you can skip checking whether each file is an executable, which is much faster, so it's better adding such dirs to ``$XONSH_DIR_CACHE_TO_ALIST``.
 
 And to reduce the typing lag even more (at the cost of a small loss of precision of syntax highlighting) you can list all the rarely changing (like ``C:\Program Files\Python\``) or not very important dirs from your ``$PATH`` in ``$XONSH_DIR_SESSION_CACHE``
 This will cache a list of files within these dirs per Xonsh session and thus avoid any IO checks on subsequent typing. However, if Xonsh or any other process changes the list of files in these dirs, you'll lose the accuracy of syntax highlighting since the cache will not be updated to reflect it
@@ -30,6 +32,8 @@ You can also cache large never changing dirs (like ``C:\Windows\System32\`` with
 
 And for a tiny extra boost you can set ``XONSH_DIR_CACHE_SKIP_EXIST`` to ``True`` to skip an extra
 IO operation by not checking for whether a file exists in the permanent/session cached dirs
+
+Set ``$XONSH_DIR_CACHE_LIST_SAVE_ON_EXIT`` to further reduce the need to update caches by saving them to file and reloading on startup
 
 ------
 
