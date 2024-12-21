@@ -153,6 +153,14 @@ def _yield_accessible_unix_file_names(path):
 import threading
 from concurrent.futures import Future, ThreadPoolExecutor
 
+def is_network_path(path):  # TODO: ONLY from path, so incorrect for mapped network drives N:\NetDrive
+    for pre in ("//", "\\\\"):
+        if path.startwsith():
+            return True
+    drive = os.path.splitdrive(path)[0]
+    if drive:
+        return not drive.endswith(':')
+    return False
 
 class _PathCmd(tp.NamedTuple):
     """A trie of executable files in a given dir with dir's timestamp for cache invalidation"""
