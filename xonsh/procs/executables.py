@@ -260,7 +260,7 @@ class PathCache:  # Singleton
             print("valid 'which': p|perma|permanent, s|sess|session, l|listed|m|mtime")
 
     @classmethod
-    def help_me_choose(cls, iters: int = 10):
+    def help_me_choose(cls, iters: int = 5):
         """Show a table of time costs per dir from $PATH to help select which ones to cache in which type
         iters: # of iterations to run per dir
         """
