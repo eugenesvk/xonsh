@@ -1,5 +1,48 @@
 # Xonsh Change Log
 
+## [0.19.5](https://github.com/eugenesvk/xonsh/compare/0.19.4...0.19.5) (2025-05-30)
+
+
+### Features
+
+* add cache file for listed dirs ([b2b3c73](https://github.com/eugenesvk/xonsh/commit/b2b3c73baceb77f7a8a0818d932c47c04dbcfd0f))
+* add superhelp and additional context via new FuncAlias ([#5366](https://github.com/eugenesvk/xonsh/issues/5366)) ([bb394a8](https://github.com/eugenesvk/xonsh/commit/bb394a8e84109dff3b0db36bb5a54d1f8cfdca5e))
+* add support for caching current working dir ([7093651](https://github.com/eugenesvk/xonsh/commit/70936518750bfb4e7c25a7bec24df719cbb8675e))
+* **environ:** allow XONSH_*_DIR to be configurable ([#5783](https://github.com/eugenesvk/xonsh/issues/5783)) ([0292b43](https://github.com/eugenesvk/xonsh/commit/0292b43e64c72ef16a75128d6346ce7d3b316d66))
+
+
+### Bug Fixes
+
+* 5491: more tests ([#5498](https://github.com/eugenesvk/xonsh/issues/5498)) ([06aca86](https://github.com/eugenesvk/xonsh/commit/06aca868a288bd462a7dba39dcd91397aabc0a84))
+* 5800 ([7163e65](https://github.com/eugenesvk/xonsh/commit/7163e65e74e3a22d2b6daab8cf2dd6976bda5adb))
+* argparse based completions should work in newer python versions ([#5542](https://github.com/eugenesvk/xonsh/issues/5542)) ([fa25491](https://github.com/eugenesvk/xonsh/commit/fa254914d74a2cdf0078bc7c48ffab1beedb6965)), closes [#5471](https://github.com/eugenesvk/xonsh/issues/5471)
+* **ArgparseCompleter:** adjust parsing for upstream private changes ([8a65d4f](https://github.com/eugenesvk/xonsh/commit/8a65d4f449124796c1a155c37e71409bbc2cb4ac))
+* don't skip history items when running full history pull after session-specific pull ([#5826](https://github.com/eugenesvk/xonsh/issues/5826)) ([dbbf22a](https://github.com/eugenesvk/xonsh/commit/dbbf22abc6523c56d4acb101bbce4dbdaaef8379))
+* exception when completing in python-only context ([#5632](https://github.com/eugenesvk/xonsh/issues/5632)) ([58e2856](https://github.com/eugenesvk/xonsh/commit/58e2856145dfcb55c8c044ac0b1973cf5f186dd7))
+* excessive permanent cache writing due to an equality fail ([471d736](https://github.com/eugenesvk/xonsh/commit/471d73606b1f0fc313faac30314e67122a72a903))
+* Fixed ``history gc`` invocation failing when ``sqlite`` history … ([#5540](https://github.com/eugenesvk/xonsh/issues/5540)) ([0f2011d](https://github.com/eugenesvk/xonsh/commit/0f2011d3028db878460c281ae7010a47ebea10b2))
+* **signals:** fix processing exit signals and exit exception ([#5399](https://github.com/eugenesvk/xonsh/issues/5399)) ([fd5304f](https://github.com/eugenesvk/xonsh/commit/fd5304fb8764a9f147dc60f82aec439001364b2b))
+* update virtualenv activator ([#5419](https://github.com/eugenesvk/xonsh/issues/5419)) ([614ddeb](https://github.com/eugenesvk/xonsh/commit/614ddebc59c8e24647e60acc0d658fe4582c08cb))
+
+
+### Reverts
+
+* 5423 ([#5468](https://github.com/eugenesvk/xonsh/issues/5468)) ([c9046ab](https://github.com/eugenesvk/xonsh/commit/c9046ab3f6dba6a431e231ef33507759c455c635))
+
+
+### Documentation
+
+* Add missing bash conversion example ([#5832](https://github.com/eugenesvk/xonsh/issues/5832)) ([de9e695](https://github.com/eugenesvk/xonsh/commit/de9e695f650f902f381cab12cfd23b5a4fdb4b74))
+* example ([ab779f1](https://github.com/eugenesvk/xonsh/commit/ab779f188757a47c06c31d2bf84c89cd841b0727))
+* fix up api doc paths ([32a0855](https://github.com/eugenesvk/xonsh/commit/32a085543a7594a39fa61062cbaa06cc540f23fc))
+* fix up broken apidocs links ([#5609](https://github.com/eugenesvk/xonsh/issues/5609)) ([32a0855](https://github.com/eugenesvk/xonsh/commit/32a085543a7594a39fa61062cbaa06cc540f23fc))
+* install xonsh as a core shell ([#5504](https://github.com/eugenesvk/xonsh/issues/5504)) ([09a89bf](https://github.com/eugenesvk/xonsh/commit/09a89bf9b40be42386226f1989b5d09e1f24281f))
+* more links to xonshrc article ([#5505](https://github.com/eugenesvk/xonsh/issues/5505)) ([d30d0a5](https://github.com/eugenesvk/xonsh/commit/d30d0a5446237dda391e6623137cdc8dd0aa0154))
+* move section "Use the Nix Package manager with Xonsh" from rc to platform tips and tricks ([#5503](https://github.com/eugenesvk/xonsh/issues/5503)) ([f9d2842](https://github.com/eugenesvk/xonsh/commit/f9d2842fb1a0c8b30cd92493bede982694ca8b3a))
+* SpecModifierAlias to the tutorial ([#5518](https://github.com/eugenesvk/xonsh/issues/5518)) ([9343512](https://github.com/eugenesvk/xonsh/commit/934351254aeb5c857298195c42ee30533e129d23))
+* Update bash to xonsh guide ([#5628](https://github.com/eugenesvk/xonsh/issues/5628)) ([c0e0687](https://github.com/eugenesvk/xonsh/commit/c0e0687376ed64e07ce95d12f014bf7ea59705e6))
+* update comparision ([#5509](https://github.com/eugenesvk/xonsh/issues/5509)) ([2552ef1](https://github.com/eugenesvk/xonsh/commit/2552ef17276fae551cbaad9c7cd3eea5526deccd))
+
 ## v0.19.4
 
 ### Changed
