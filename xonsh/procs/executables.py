@@ -38,33 +38,16 @@ def get_paths(env=None):
     return tuple(reversed(tuple(clear_paths(env.get("PATH") or []))))
 
 
-def is_file(filepath):
-    """Check that ``filepath`` is file and exist."""
-    if isinstance(filepath, str):
-        filepath = Path(filepath)
-    try:
-        if filepath.is_file():
-            return True
-    except OSError:
-        return False
-    return False
-
-
-def is_executable_in_windows(filepath, check_file_exist=True, env=None):
-    """Check the file is executable in Windows.
-
-    Parameters
-    ----------
-    filepath : str
-        Path to file.
-    check_file_exist : bool
-        If ``False`` do not check that file exists. This helps to disable double checking in case the file already
-        checked in upstream code. This is important for Windows where checking can take a long time.
-    """
+def is_executable_in_windows(filepath, env=None):
+    """Check the file is executable in Windows."""
     filepath = Path(filepath)
     try:
-        if check_file_exist and not is_file(filepath):
+        try:
+            if not filepath.is_file():
+                return False
+        except OSError:
             return False
+
         env = env if env is not None else XSH.env
         return any(s.lower() == filepath.suffix.lower() for s in env.get("PATHEXT", []))
     except FileNotFoundError:
@@ -74,20 +57,10 @@ def is_executable_in_windows(filepath, check_file_exist=True, env=None):
         return False
 
 
-def is_executable_in_posix(filepath, check_file_exist=True):
-    """Check the file is executable in POSIX.
-
-    Parameters
-    ----------
-    filepath : str
-        Path to file.
-    check_file_exist : bool
-        If ``False`` do not check that file exists. This made to consistency with ``is_executable_in_windows``.
-    """
+def is_executable_in_posix(filepath):
+    """Check the file is executable in POSIX."""
     try:
-        if check_file_exist and not is_file(filepath):
-            return False
-        return os.access(filepath, os.X_OK)
+        return filepath.is_file() and os.access(filepath, os.X_OK)
     except OSError:
         # broken Symlink are neither dir not files
         pass
@@ -121,9 +94,8 @@ def locate_relative_path(name, env=None, check_executable=False, use_pathext=Fal
         for possible_name in possible_names:
             filepath = p.parent / possible_name
             try:
-                if not is_file(filepath) or (
-                    check_executable
-                    and not is_executable(filepath, check_file_exist=False)
+                if not filepath.is_file() or (
+                    check_executable and not is_executable(filepath)
                 ):
                     continue
                 return str(p.absolute())
@@ -151,8 +123,8 @@ def locate_file_in_path_env(name, env=None, check_executable=False, use_pathext=
     for path, possible_name in itertools.product(paths, possible_names):
         filepath = Path(path) / possible_name
         try:
-            if not is_file(filepath) or (
-                check_executable and not is_executable(filepath, check_file_exist=False)
+            if not filepath.is_file() or (
+                check_executable and not is_executable(filepath)
             ):
                 continue
             return str(filepath)
