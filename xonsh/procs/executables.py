@@ -589,6 +589,7 @@ def locate_relative_path(name, env=None, check_executable=False, use_pathext=Fal
         env = env if env else XSH.env
         cache_non_exe = env.get("XONSH_DIR_CWD_CACHE_NON_EXE", True)
         is_cache_cwd = env.get("XONSH_DIR_CWD_CACHE", False)
+        skip_exist = env.get("XONSH_DIR_CACHE_SKIP_EXIST", False)
         pc = PathCache(env)
         possible_names = get_possible_names(p.name, env) if use_pathext else [p.name]
 
@@ -613,18 +614,19 @@ def locate_relative_path(name, env=None, check_executable=False, use_pathext=Fal
                     if len(filenames) > env.get("XONSH_DIR_CWD_CACHE_LEN_MAX", 500):
                         pc.cwd_too_long.add(path)
                     for fname in filenames:
-                        if cache_non_exe:
-                            ftrie[fname.lower()] = fname  # for case-insensitive match
+                        if cache_non_exe:  # ↓for case-insensitive match
+                            ftrie[fname.lower()] = fname
                         elif is_executable(fname, check_file_exist=False):
-                            ftrie[fname.lower()] = fname  # for case-insensitive match
+                            ftrie[fname.lower()] = fname
                     break  # no recursion into subdir
                 pc.set_dir_key_cache(path, path_time, ftrie)
+                skip_exist = True  # avoid dupe is_file check since we already got a list of files
             for possible_name in possible_names:
                 possible_Name = ftrie.get(possible_name.lower())
                 if possible_Name is not None:  #          ✓ full match
                     if found := check_possible_name(
-                        path, possible_Name, check_executable, check_file_exist=False
-                    ):  # avoid dupe is_file check since we already got a list of files
+                        path, possible_Name, check_executable, check_file_exist=not skip_exist
+                    ):
                         return found
                     else:
                         continue
