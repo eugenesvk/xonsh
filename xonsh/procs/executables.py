@@ -248,44 +248,14 @@ def locate_file_in_path_env(name, env=None, check_executable=False, use_pathext=
     env_path = env.get("PATH", [])
     paths = tuple(clear_paths(env_path))
     possible_names = get_possible_names(name, env) if use_pathext else [name]
-    t0 = time.perf_counter()
 
     for path, possible_name in itertools.product(paths, possible_names):
-        # Fast path: stable directory cache (System32 etc.) — O(1) hash lookup
-        cached = _cached_dir_contains(path, possible_name)
-        if cached is None:
-            pass  # Not a stable dir — fall through to stat below
-        elif not cached[0]:
-            continue  # Definitely not in this dir — skip without stat
-        else:
-            found, populated = cached
-            # File exists per cache — only check executable flag (no I/O)
-            filepath = Path(path) / possible_name
-            if check_executable and not is_executable(filepath, check_file_exist=False):
-                continue
-            result = str(filepath)
-            prefix = "populate cache, get from cache" if populated else "get from cache"
-            _cache_debug(
-                f"xonsh-commands-cache: {prefix} `{result}` "
-                f"({time.perf_counter() - t0:.4f} sec)"
-            )
-            return result
-        # Not a cached dir — original stat-based check
         filepath = Path(path) / possible_name
         try:
             if not is_file(filepath) or (
                 check_executable and not is_executable(filepath, check_file_exist=False)
             ):
                 continue
-            result = str(filepath)
-            _cache_debug(
-                f"xonsh-commands-cache: get from disk `{result}` "
-                f"({time.perf_counter() - t0:.4f} sec)"
-            )
-            return result
+            return str(filepath)
         except PermissionError:
             continue
-
-    _cache_debug(
-        f"xonsh-commands-cache: not found `{name}` ({time.perf_counter() - t0:.4f} sec)"
-    )
