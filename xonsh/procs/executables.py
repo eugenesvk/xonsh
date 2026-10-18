@@ -403,7 +403,7 @@ class PathCache:  # Singleton
                 for dirpath, _dirnames, filenames in walk(path):
                     file_count = f"{len(filenames)}".rjust(5)
                     for fname in filenames:
-                        is_executable(Path(dirpath) / fname, skip_exist=False)
+                        is_executable(Path(dirpath) / fname, check_file_exist=True)
                     break  # no recursion into subdir
             t1 = ttime()
             t_paths[path]["list_exe"] = (t1 - t0)/ns/iters
