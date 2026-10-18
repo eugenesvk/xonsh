@@ -323,7 +323,7 @@ def locate_file_in_path_env(
                 if possible_name not in f:
                     continue
                 if found := check_possible_name(
-                    path, possible_name, check_executable
+                    path, possible_name, check_executable, check_file_exist=False
                 ):
                     return found
                 else:
