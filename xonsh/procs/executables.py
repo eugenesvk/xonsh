@@ -235,6 +235,17 @@ def _cache_debug(msg):
 from os import walk
 
 
+def check_possible_name(path, possible_name, check_executable, check_file_exist):
+    filepath = Path(path) / possible_name
+    try:
+        if not is_file(filepath) or (check_executable and
+            not is_executable(filepath, check_file_exist)):
+            return
+        return str(filepath)
+    except PermissionError:
+        return
+
+
 def locate_file_in_path_env(name, env=None, check_executable=False, use_pathext=False):
     """Search file name in ``$PATH`` and return full path.
 
@@ -267,37 +278,25 @@ def locate_file_in_path_env(name, env=None, check_executable=False, use_pathext=
                 for possible_name in possible_names:
                     if possible_name not in f:
                         continue
-                    filepath = Path(path) / possible_name
-                    try:
-                        if not is_file(filepath) or (
-                            check_executable and
-                            not is_executable(filepath, check_file_exist=False)
-                        ):
-                            continue
-                        return str(filepath)
-                    except PermissionError:
-                        return
+                    if found := check_possible_name(
+                        path, possible_name, check_executable, check_file_exist=False
+                    ):
+                        return found
+                    else:
+                        continue
             else:
                 for possible_name in possible_names:
-                    filepath = Path(path) / possible_name
-                    try:
-                        if not is_file(filepath) or (
-                            check_executable and
-                            not is_executable(filepath, check_file_exist=False)
-                        ):
-                            continue
-                        return str(filepath)
-                    except PermissionError:
+                    if found := check_possible_name(
+                        path, possible_name, check_executable, check_file_exist=False
+                    ):
+                        return found
+                    else:
                         continue
     else:
         for path, possible_name in itertools.product(paths, possible_names):
-            filepath = Path(path) / possible_name
-            try:
-                if not is_file(filepath) or (
-                    check_executable and
-                    not is_executable(filepath, check_file_exist=False)
-                ):
-                    continue
-                return str(filepath)
-            except PermissionError:
+            if found := check_possible_name(
+                path, possible_name, check_executable, check_file_exist=False
+            ):
+                return found
+            else:
                 continue
