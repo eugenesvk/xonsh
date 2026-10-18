@@ -259,11 +259,9 @@ def locate_file_in_path_env(name, env=None, check_executable=False, use_pathext=
             continue  # Definitely not in this dir — skip without stat
         else:
             found, populated = cached
-            # File exists per cache — verify it's a regular file and executable
+            # File exists per cache — only check executable flag (no I/O)
             filepath = Path(path) / possible_name
-            if not is_file(filepath) or (
-                check_executable and not is_executable(filepath, check_file_exist=False)
-            ):
+            if check_executable and not is_executable(filepath, check_file_exist=False):
                 continue
             result = str(filepath)
             prefix = "populate cache, get from cache" if populated else "get from cache"
