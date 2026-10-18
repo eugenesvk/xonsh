@@ -585,6 +585,7 @@ def locate_file_in_path_env(
                     i = f.index(possible_name.lower())
                     possible_Name = F[i]
                 except ValueError:
+                    continue
                 if found := check_possible_name(path, possible_Name, check_executable, check_file_exist=False):
                     return found
                 else:
