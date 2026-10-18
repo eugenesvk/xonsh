@@ -449,8 +449,9 @@ from os import walk
 def check_possible_name(path, possible_name, check_executable, check_file_exist):
     filepath = Path(path) / possible_name
     try:
-        if not is_file(filepath) or (check_executable and
-            not is_executable(filepath, check_file_exist)):
+        if check_file_exist and not is_file(filepath):
+            return
+        if check_executable and not is_executable(filepath, check_file_exist=False):
             return
         return str(filepath)
     except PermissionError:
