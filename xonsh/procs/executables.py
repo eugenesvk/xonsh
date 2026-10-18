@@ -269,7 +269,7 @@ def locate_file_in_path_env(name, env=None, check_executable=False, use_pathext=
                         continue
                     filepath = Path(path) / possible_name
                     try:
-                        if not filepath.is_file() or (
+                        if not is_file(filepath) or (
                             check_executable and
                             not is_executable(filepath, check_file_exist=False)
                         ):
