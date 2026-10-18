@@ -1079,7 +1079,7 @@ def locate_relative_path(
                         and not is_executable(filepath, check_file_exist=False)
                     ):
                         continue
-                    return str(p.absolute())
+                    return str(filepath.absolute())
                 except PermissionError:
                     continue
 
