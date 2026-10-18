@@ -233,6 +233,8 @@ def _cache_debug(msg):
 
 
 from os import walk
+
+
 def locate_file_in_path_env(name, env=None, check_executable=False, use_pathext=False):
     """Search file name in ``$PATH`` and return full path.
 
@@ -252,24 +254,25 @@ def locate_file_in_path_env(name, env=None, check_executable=False, use_pathext=
     env = env if env is not None else XSH.env
     env_path = env.get("PATH", [])
     paths = tuple(clear_paths(env_path))
-    path_to_list = env.get("XONSH_WIN_PATH_DIRS_TO_LIST",[])
+    path_to_list = env.get("XONSH_WIN_PATH_DIRS_TO_LIST", [])
     possible_names = get_possible_names(name, env) if use_pathext else [name]
-    ext_count = len(possible_names)
 
-    if ext_count > 2 and path_to_list:
+    if path_to_list and (len(possible_names) > 2):
         for path in paths:
             if path in path_to_list:
                 f = []
-                for (_dirpath, _dirnames, filenames) in walk(path):
+                for _dirpath, _dirnames, filenames in walk(path):
                     f.extend(filenames)
-                    break # no recursion into subdir
+                    break  # no recursion into subdir
                 for possible_name in possible_names:
-                    if not possible_name in f:
+                    if possible_name not in f:
                         continue
                     filepath = Path(path) / possible_name
                     try:
-                        if not               is_file(filepath) or (check_executable and
-                           not is_executable(filepath, check_file_exist=False)):
+                        if not filepath.is_file() or (
+                            check_executable and
+                            not is_executable(filepath, check_file_exist=False)
+                        ):
                             continue
                         return str(filepath)
                     except PermissionError:
@@ -278,8 +281,10 @@ def locate_file_in_path_env(name, env=None, check_executable=False, use_pathext=
                 for possible_name in possible_names:
                     filepath = Path(path) / possible_name
                     try:
-                        if not               is_file(filepath) or (check_executable and
-                           not is_executable(filepath, check_file_exist=False)):
+                        if not is_file(filepath) or (
+                            check_executable and
+                            not is_executable(filepath, check_file_exist=False)
+                        ):
                             continue
                         return str(filepath)
                     except PermissionError:
@@ -288,8 +293,10 @@ def locate_file_in_path_env(name, env=None, check_executable=False, use_pathext=
         for path, possible_name in itertools.product(paths, possible_names):
             filepath = Path(path) / possible_name
             try:
-                if not               is_file(filepath) or (check_executable and
-                   not is_executable(filepath, check_file_exist=False)):
+                if not is_file(filepath) or (
+                    check_executable and
+                    not is_executable(filepath, check_file_exist=False)
+                ):
                     continue
                 return str(filepath)
             except PermissionError:
