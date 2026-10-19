@@ -494,8 +494,9 @@ class PathCache:  # Singleton
             for _ in range(iters_min):  # don't waste time with large/slow dirs
                 for dirpath, _dirnames, filenames in walk(path):
                     for fname in filenames:
-                        is_executable(Path(dirpath) / fname, check_file_exist=True):
+                        is_executable(Path(dirpath) / fname, check_file_exist=True)
                     break  # no recursion into subdir
+            t1 = ttime()
             t_paths[path]["list_exe"] = (t1 - t0) / ns / iters_min
 
             # find each pathext executables in
