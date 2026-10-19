@@ -1742,7 +1742,7 @@ def _is_plugin_mode():
     return XonshLexer.docs_mode or getattr(XSH, "commands_cache", None) is None
 
 
-@events.on_pre_prompt
+# @events.on_pre_prompt
 def _clear_cmd_caches(**kwargs):
     global _validation_gen
     _cmd_valid_cache.clear()
@@ -1760,6 +1760,8 @@ def _command_is_valid(cmd):
     """
     if iskeyword(cmd):
         return False
+    if 'ignore async cache':
+        return (cmd in XSH.aliases or locate_executable(cmd)) and not iskeyword(cmd)
     if cmd in _cmd_valid_cache:
         return _cmd_valid_cache[cmd]
     # ``XSH.aliases`` is None when the lexer is imported as a pygments
