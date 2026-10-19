@@ -404,7 +404,7 @@ class PathCache:  # Singleton
         t_paths: dict[str, dict[str, float]] = dict()
         msg = f"""\
             A ~time estimate of 3 methods of searching for a command in {c.b}$PATH{c.R} (helps choose which dirs to add to which cache):
-               • {c.c}ext{c.R}      checks {ext_count} time{"s" if ext_count > 1 else ""} whether a given file.ext exists (≝no cache, precise, slow with many pathext·paths ({int(pathext*ext_count)}) on Windows)
+               • {c.c}ext{c.R}      checks {ext_count} time{"s" if ext_count > 1 else ""} whether a given file.ext exists (≝no cache, precise, slow with many pathext·paths ({int(pathext * ext_count)}) on Windows)
                • {c.c}list_exe{c.R} list all files in a dir, cache only executables (each file is checked) (precise, slow with many files)
                • {c.c}list_all{c.R} list all files in a dir, cache them all (no per-file check) (imprecise, faster vs. list_exe)
             For each method below is a rough time estimate of a single operation in seconds. If {c.c}list_exe{c.R} is comparable to {c.c}ext{c.R} (even if higher), then it should be cached in {c.b}$XONSH_DIR_CACHE_TO_LIST{c.R} even if the dir changes frequently since you'll pay that price once per prompt and only on change instead of once per keystroke regardless of change. If it's high
@@ -528,7 +528,7 @@ class PathCache:  # Singleton
                 m = re.match(z0, s)
                 if m:
                     z0pos_len = len(m.groups()[2]) if m.groups()[2] else 0
-                    s_out[k] = c_pre + re.sub(z0, f" .{' '*z0pos_len}", s) + c_pos
+                    s_out[k] = c_pre + re.sub(z0, f" .{' ' * z0pos_len}", s) + c_pos
                 else:
                     s_out[k] = c_pre + s + c_pos
 
@@ -1063,7 +1063,10 @@ def locate_relative_path(
                 possible_Name = ftrie.get(possible_name.lower())
                 if possible_Name is not None:  #          ✓ full match
                     if found := check_possible_name(
-                        path, possible_Name, check_executable, check_file_exist=not skip_exist
+                        path,
+                        possible_Name,
+                        check_executable,
+                        check_file_exist=not skip_exist,
                     ):
                         return found
                     else:
@@ -1196,7 +1199,10 @@ def locate_file_in_path_env(
                 possible_Name = cmd_chartrie.get(possible_name.lower())
                 if possible_Name is not None:  #          ✓ full match
                     if found := check_possible_name(
-                        path, possible_Name, check_executable, check_file_exist=skip_exist
+                        path,
+                        possible_Name,
+                        check_executable,
+                        check_file_exist=skip_exist,
                     ):
                         return found
                     else:
@@ -1223,7 +1229,10 @@ def locate_file_in_path_env(
                 possible_Name = f_trie.get(possible_name.lower())
                 if possible_Name is not None:  #          ✓ full match
                     if found := check_possible_name(
-                        path, possible_Name, check_executable, check_file_exist=not skip_exist
+                        path,
+                        possible_Name,
+                        check_executable,
+                        check_file_exist=not skip_exist,
                     ):
                         return found
                     else:
@@ -1260,7 +1269,10 @@ def locate_file_in_path_env(
                 possible_Name = ftrie.get(possible_name.lower())
                 if possible_Name is not None:  #          ✓ full match
                     if found := check_possible_name(
-                        path, possible_Name, check_executable, check_file_exist=not skip_exist
+                        path,
+                        possible_Name,
+                        check_executable,
+                        check_file_exist=not skip_exist,
                     ):  # avoid dupe is_file check since we already got a list of files
                         return found
                     else:
@@ -1272,7 +1284,9 @@ def locate_file_in_path_env(
                     partial_match.is_part = True
         else:  # check that file(s) exists individually
             for possible_name in possible_names:
-                if found := check_possible_name(path, possible_name, check_executable, check_file_exist=False):
+                if found := check_possible_name(
+                    path, possible_name, check_executable, check_file_exist=False
+                ):
                     return found
                 else:
                     continue

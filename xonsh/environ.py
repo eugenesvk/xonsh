@@ -1571,7 +1571,6 @@ class CacheSetting(Xettings):
         "and how long it took.",
     )
 
-
     XONSH_DIR_PERMA_CACHE = Var.with_default(
         set(),
         "(Win) Reduce typing delay via faster 'executable exists' checks for syntax highlighting. "

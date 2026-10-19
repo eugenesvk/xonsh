@@ -1761,20 +1761,19 @@ def _command_is_valid(cmd, partial_match=None):
     """
     if iskeyword(cmd):
         return False
-    if 'ignore async cache':
+    if "ignore async cache":
         use_dir_cache_session = (
             True if XSH.env.get("XONSH_DIR_SESSION_CACHE", False) else False
         )
-        use_dir_cache_perma = True if XSH.env.get("XONSH_DIR_PERMA_CACHE", False) else False
-        return (
-            cmd in XSH.aliases
-            or locate_executable(
-                cmd,
-                path_cache_dirty=True,
-                use_dir_cache_session=use_dir_cache_session,
-                use_dir_cache_perma=use_dir_cache_perma,
-                partial_match=partial_match,
-            )
+        use_dir_cache_perma = (
+            True if XSH.env.get("XONSH_DIR_PERMA_CACHE", False) else False
+        )
+        return cmd in XSH.aliases or locate_executable(
+            cmd,
+            path_cache_dirty=True,
+            use_dir_cache_session=use_dir_cache_session,
+            use_dir_cache_perma=use_dir_cache_perma,
+            partial_match=partial_match,
         )
     if cmd in _cmd_valid_cache:
         return _cmd_valid_cache[cmd]
